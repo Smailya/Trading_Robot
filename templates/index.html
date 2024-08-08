@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Trading Bot Dashboard</h1>
+    </header>
+
+    <main>
+        <section id="performance">
+            <h2>Performance Metrics</h2>
+            <div class="metric">
+                <span class="label">Initial Balance:</span>
+                <span class="value" id="initial-balance">$10,000</span>
+            </div>
+            <div class="metric">
+                <span class="label">Current Balance:</span>
+                <span class="value" id="current-balance">$10,500</span>
+            </div>
+            <div class="metric">
+                <span class="label">Profit/Loss:</span>
+                <span class="value" id="profit-loss">+$500</span>
+            </div>
+        </section>
+
+        <section id="trades">
+            <h2>Recent Trades</h2>
+            <table id="trades-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                        <th>Amount</th>
+                        <th>Entry Price</th>
+                        <th>Stop Loss</th>
+                        <th>Take Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Trade rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Trading Bot. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function fetchTrades() {
+            $.getJSON('/api/trades', function(data) {
+                $('#trades-table tbody').empty();
+                data.forEach(function(trade) {
+                    $('#trades-table tbody').append(`
+                        <tr>
+                            <td>${trade.timestamp}</td>
+                            <td>${trade.action}</td>
+                            <td>${trade.amount}</td>
+                            <td>${trade.entry_price}</td>
+                            <td>${trade.stop_loss}</td>
+                            <td>${trade.take_profit}</td>
+                        </tr>
+                    `);
+                });
+            }).fail(function() {
+                console.error("Failed to fetch trades.");
+                alert("Error fetching trades. Please try again later.");
+            });
+        }
+
+        function updatePerformanceMetrics() {
+            // Placeholder for actual data fetching
+            $('#initial-balance').text('$10,000');  // Replace with actual data
+            $('#current-balance').text('$10,500');  // Replace with actual data
+            $('#profit-loss').text('+$500');         // Replace with actual data
+        }
+
+        setInterval(fetchTrades, 5000); // Fetch trades every 5 seconds
+        setInterval(updatePerformanceMetrics, 60000); // Update performance metrics every minute
+
+        // Initial fetch
+        $(document).ready(function() {
+            fetchTrades();
+            updatePerformanceMetrics();
+        });
+    </script>
+</body>
+</html>
